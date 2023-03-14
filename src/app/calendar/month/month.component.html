@@ -1,0 +1,12 @@
+<div class="month-view">
+  <div class="week" *ngFor="let week of calendarDates">
+    <div class="day" *ngFor="let dayValue of week" (click)="openCreateEventModal($event ,dayValue)">
+      {{dayValue.day}}
+
+      <ng-container *ngIf="dayValue.events">
+        <div class="event" *ngFor="let event of dayValue.events; let i = index" (click)="openEditEventModal($event, event)" [style]="{top: (i + 1) * 22+'px'}">{{ event.name }}</div>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

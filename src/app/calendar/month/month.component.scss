@@ -1,0 +1,34 @@
+.month-view {
+  width: 100%;
+  height: calc(100% - 100px);
+  display: flex;
+  flex-direction: column;
+
+  .week {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border-bottom: var(--hairline) 1px solid;
+
+    .day {
+      flex: 1 1;
+      position: relative;
+      border-right: var(--hairline) 1px solid;
+
+      .event {
+        position: absolute;
+        width: 100%;
+        z-index: 100;
+        color: #fff;
+        padding: 0 8px;
+        background-color: var(--main-blue);
+        border-radius: 4px;
+        cursor: pointer;
+        pointer-events: auto;
+        overflow: hidden;
+      }
+
+    }
+  }
+}
+

@@ -1,0 +1,49 @@
+<div class="event-wrapper" [formGroup]="eventForm">
+  <mat-form-field appearance="fill">
+    <input matInput type="text" autocomplete="off" formControlName="name" />
+
+    <mat-label>
+      Event Name
+    </mat-label>
+
+    <mat-error *ngIf="eventForm.get('name')?.hasError('required')"> This field is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>
+      Event type
+    </mat-label>
+    <mat-select formControlName="type">
+      <mat-option *ngFor="let type of [eventsType.common, eventsType.holiday]" [value]="type">
+        {{ type }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+
+  <ng-container *ngIf="!eventForm.get('isFullDay')?.value">
+    <mat-form-field appearance="fill">
+      <input matInput type="text" autocomplete="off" formControlName="startDate" />
+
+      <mat-label>
+        Start date
+      </mat-label>
+
+      <mat-error *ngIf="eventForm.get('startDate')?.hasError('required')"> This field is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <input matInput type="text" autocomplete="off" formControlName="endDate" />
+
+      <mat-label>
+        End date
+      </mat-label>
+
+      <mat-error *ngIf="eventForm.get('endDate')?.hasError('required')"> This field is required</mat-error>
+    </mat-form-field>
+  </ng-container>
+
+
+    <mat-checkbox formControlName="isFullDay">Full Day</mat-checkbox>
+
+</div>

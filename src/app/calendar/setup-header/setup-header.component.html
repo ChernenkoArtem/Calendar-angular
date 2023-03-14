@@ -1,0 +1,18 @@
+<header class="setup-header">
+  <div class="mouth-changer">
+    <div class="actions">
+      <button class="actions__prev" (click)="prevHandler()"> < </button>
+      <button class="actions__next" (click)="nextHandler()"> > </button>
+    </div>
+    <div class="current-date">{{ currentMonth }}</div>
+  </div>
+  <div class="view-changer">
+    <mat-form-field appearance="fill">
+      <mat-select [(value)]="selectType">
+        <mat-option *ngFor="let viewType of [viewTypes.month, viewTypes.week]" [value]="viewType">
+          {{viewType}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</header>
