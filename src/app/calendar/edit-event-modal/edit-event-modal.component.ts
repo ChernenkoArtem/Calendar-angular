@@ -14,6 +14,7 @@ import { of, Subject, takeUntil } from "rxjs";
 })
 export class EditEventModalComponent implements OnInit, OnDestroy {
   eventForm!: FormGroup;
+  isSubmitted = false;
   private unsubscribeAll: Subject<any> = new Subject();
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { event: IEvent},
@@ -36,14 +37,18 @@ export class EditEventModalComponent implements OnInit, OnDestroy {
   }
 
   updateEvent() {
-    const formData = this.eventForm.getRawValue();
+    this.isSubmitted = true;
 
-    of(this.eventsStoreService.updateEvent(formData.event))
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((events) => {
-        this.calendarService.eventsCollection = events;
-        this.matDialog.closeAll();
-      })
+    if (this.eventForm.valid) {
+      const formData = this.eventForm.getRawValue();
+
+      of(this.eventsStoreService.updateEvent(formData.event))
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe((events) => {
+          this.calendarService.eventsCollection = events;
+          this.matDialog.closeAll();
+        })
+    }
   }
 
   ngOnDestroy(): void {

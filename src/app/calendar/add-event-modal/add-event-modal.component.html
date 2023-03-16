@@ -1,7 +1,7 @@
 <div class="modal-container">
   <div class="content">
     <ng-container [formGroup]="eventForm">
-      <app-event-form formControlName="event"></app-event-form>
+      <app-event-form formControlName="event" [isSubmitted]="isSubmitted"></app-event-form>
     </ng-container>
   </div>
   <div class="actions">

@@ -16,6 +16,7 @@ import { uid } from "../../../utils/utils";
 })
 export class AddEventModalComponent implements OnInit, OnDestroy {
   eventForm!: FormGroup;
+  isSubmitted = false;
   private unsubscribeAll: Subject<any> = new Subject();
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {fullDate: momentType},
@@ -47,13 +48,17 @@ export class AddEventModalComponent implements OnInit, OnDestroy {
   }
 
   saveEvent(): void {
-    const formData = this.eventForm.getRawValue();
-    of(this.eventsStoreService.addEventToStorage(formData.event))
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((events) => {
-      this.calendarService.eventsCollection = events;
-      this.matDialog.closeAll();
-    })
+    this.isSubmitted = true;
+
+    if (this.eventForm.valid) {
+      const formData = this.eventForm.getRawValue();
+      of(this.eventsStoreService.addEventToStorage(formData.event))
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe((events) => {
+          this.calendarService.eventsCollection = events;
+          this.matDialog.closeAll();
+        })
+    }
   }
 
   ngOnDestroy(): void {

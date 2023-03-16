@@ -1,5 +1,12 @@
-import { Component, forwardRef, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, Validators } from "@angular/forms";
+import { Component, forwardRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import {
+  ControlValueAccessor,
+  FormBuilder, FormControl,
+  FormGroup,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  Validators
+} from "@angular/forms";
 import { IEvent } from "../_data/interfaces/event";
 import { EventsType } from "../_data/enums/events-type";
 import { distinctUntilChanged, Subject, takeUntil } from "rxjs";
@@ -14,6 +21,11 @@ import { distinctUntilChanged, Subject, takeUntil } from "rxjs";
       useExisting: forwardRef(() => EventFormComponent),
       multi: true,
     },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => EventFormComponent),
+      multi: true,
+    },
   ],
 })
 export class EventFormComponent implements ControlValueAccessor, OnChanges, OnInit, OnDestroy{
@@ -21,15 +33,16 @@ export class EventFormComponent implements ControlValueAccessor, OnChanges, OnIn
   eventForm!: FormGroup;
   event!: IEvent;
   eventsType = EventsType;
+  @Input() isSubmitted = false;
   private unsubscribeAll: Subject<any> = new Subject();
   constructor(private fb: FormBuilder) {
   }
   ngOnChanges(changes: SimpleChanges) {
-    // if (changes && changes.isSubmitted && changes.isSubmitted.currentValue !== changes.isSubmitted.previousValue) {
-    //   if (changes.isSubmitted && changes.isSubmitted.currentValue) {
-    //     this.eventForm.markAllAsTouched();
-    //   }
-    // }
+    if (changes && changes['isSubmitted'] && changes['isSubmitted'].currentValue !== changes['isSubmitted'].previousValue) {
+      if (changes['isSubmitted'] && changes['isSubmitted'].currentValue) {
+        this.eventForm.markAllAsTouched();
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -64,6 +77,16 @@ export class EventFormComponent implements ControlValueAccessor, OnChanges, OnIn
     if (value === null) {
       this.eventForm.reset();
     }
+  }
+
+  validate(control: FormControl) {
+    if (control.touched) {
+      this.eventForm.markAllAsTouched();
+    }
+    if (this.isSubmitted) {
+      this.eventForm.markAllAsTouched();
+    }
+    return this.eventForm.valid ? null : { dataSource: { valid: false } };
   }
 
 
