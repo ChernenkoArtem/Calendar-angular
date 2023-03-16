@@ -11,19 +11,19 @@ export class EventsStoreService {
   }
 
   addEventToStorage(event: IEvent): EventStore {
-    const {key, events} = this.getEvenData(event)
+    const {key, events} = this.getEventData(event)
 
     if (events[key]) {
       this.setItem( this.eventsStoreKey, { ...events, [key]: [...events[key], event]});
     } else {
       this.setItem( this.eventsStoreKey,  { ...events, [key]: [event]});
     }
-    return this.getItem( this.eventsStoreKey);
+    return this.getItem(this.eventsStoreKey);
   }
 
   updateEvent(event: IEvent): EventStore {
     event.date = this.moment(event.date);
-    const {key, events} = this.getEvenData(event)
+    const {key, events} = this.getEventData(event)
 
     if (events[key]) {
       const updatedEventsArr = events[key].map((eventItem: IEvent ) => {
@@ -36,10 +36,10 @@ export class EventsStoreService {
       this.setItem( this.eventsStoreKey, { ...events, [key]: updatedEventsArr});
     }
 
-    return this.getItem( this.eventsStoreKey);
+    return this.getItem(this.eventsStoreKey);
   }
 
-  getEvenData(event: IEvent): {key: string, events: EventStore} {
+  getEventData(event: IEvent): {key: string, events: EventStore} {
     const events: EventStore = this.getItem( this.eventsStoreKey) || {};
 
     const key = event.date.format(CONSTANTS.commonFormat)

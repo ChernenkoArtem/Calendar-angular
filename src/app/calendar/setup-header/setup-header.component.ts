@@ -1,21 +1,23 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { ViewTypes } from "../_data/enums/view-types";
 import { CalendarService } from "../_data/calendar.service";
 import { isEmptyObj } from "../../../utils/utils";
 import { MOMENT } from "../../../utils/moment";
 import { DurationInputArg2 } from "moment";
+import { Subject, takeUntil } from "rxjs";
 
 @Component({
   selector: 'app-setup-header',
   templateUrl: './setup-header.component.html',
   styleUrls: ['./setup-header.component.scss']
 })
-export class SetupHeaderComponent implements OnInit{
+export class SetupHeaderComponent implements OnInit, OnDestroy{
   viewTypes = ViewTypes;
   currentDate = {};
-  selected: string = this.viewTypes.month;
+  selected: ViewTypes = this.viewTypes.month;
   currentMonth = '';
+  private unsubscribeAll: Subject<any> = new Subject();
   constructor(
     private router: Router, private route: ActivatedRoute,
     private calendarService: CalendarService,
@@ -24,7 +26,7 @@ export class SetupHeaderComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.calendarService.currentDateObservable().subscribe( (params) => {
+    this.calendarService.currentDateObservable().pipe(takeUntil(this.unsubscribeAll)).subscribe( (params) => {
       if (isEmptyObj(params)) {
         const paramsFormat = this.calendarService.fromDateToQuery(this.moment().clone().startOf('month'));
         this.updateDateParams(paramsFormat);
@@ -36,14 +38,15 @@ export class SetupHeaderComponent implements OnInit{
 
     })
   }
-  set selectType(value: string) {
+
+  set selectType(value: ViewTypes) {
     const oldType = this.selectType;
     this.selected = value;
     const newRout = this.getNewRoutOfView(oldType);
     this.router.navigate([newRout])
   };
 
-  get selectType(): string {
+  get selectType(): ViewTypes {
     return this.selected;
   };
 
@@ -53,18 +56,25 @@ export class SetupHeaderComponent implements OnInit{
     urlArr[segmentIndex] = this.selectType;
     return urlArr.join('/');
   }
+
   nextHandler(): void {
-    const nextDate = this.calendarService.getNextMonthFullDate(this.currentDate, this.selected as DurationInputArg2);
+    const nextDate = this.calendarService.getNextFullDate(this.currentDate, this.selected as DurationInputArg2);
     this.updateDateParams(nextDate)
   }
+
   prevHandler(): void {
-    const nextDate = this.calendarService.getPrevMonthFullDate(this.currentDate, this.selected as DurationInputArg2);
+    const nextDate = this.calendarService.getPrevFullDate(this.currentDate, this.selected as DurationInputArg2);
     this.updateDateParams(nextDate)
   }
 
   updateDateParams(queryParams: Params) {
     const {year, month, day}= queryParams;
     this.router.navigate([this.selected, year, month, day], { relativeTo: this.route });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeAll.complete();
+    this.unsubscribeAll.unsubscribe();
   }
 
 }

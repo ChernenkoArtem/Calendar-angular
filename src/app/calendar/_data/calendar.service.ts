@@ -85,13 +85,13 @@ export class CalendarService {
     return resultDates;
   }
 
-  getNextMonthFullDate(queryParams: Params, type: DurationInputArg2): Params {
+  getNextFullDate(queryParams: Params, type: DurationInputArg2): Params {
     const date = this.fromQueryToDate(queryParams);
     const newDate =  date.clone().add(1, type);
     return this.fromDateToQuery(newDate);
   }
 
-  getPrevMonthFullDate(queryParams: Params, type: DurationInputArg2): Params {
+  getPrevFullDate(queryParams: Params, type: DurationInputArg2): Params {
     const date = this.fromQueryToDate(queryParams);
     const newDate =  date.clone().subtract(1, type);
     return this.fromDateToQuery(newDate);
